@@ -11,4 +11,4 @@ let getHomePage = async (req, res) => {
   }
 };
 
-export { getHomePage };
+module.exports = { getHomePage };
