@@ -58,7 +58,7 @@ const checkUserEmail = (email) => {
   });
 };
 
-const getAllUsers = (userId) => {
+const getAllUsers = async (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let users = '';
