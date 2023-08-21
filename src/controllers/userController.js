@@ -1,4 +1,4 @@
-import userService from '../services/userService';
+import userService from "../services/userService";
 
 const handleLogin = async (req, res) => {
   const email = req.body.email;
@@ -7,7 +7,7 @@ const handleLogin = async (req, res) => {
   if (!email || !password) {
     return res
       .status(500)
-      .json({ errCode: 1, message: 'Missing inputs parameter!' });
+      .json({ errCode: 1, message: "Missing inputs parameter!" });
   }
 
   let userData = await userService.handleUserLogin(email, password);
@@ -24,13 +24,42 @@ const handleGetAllUsers = async (req, res) => {
   if (!id) {
     return res.status(200).json({
       errCode: 1,
-      errMessage: 'Missing required parameters',
+      errMessage: "Missing required parameters",
       users: [],
     });
   }
   let users = await userService.getAllUsers(id);
 
-  return res.status(200).json({ errCode: 0, errMessage: 'OK', users: users });
+  return res.status(200).json({ errCode: 0, errMessage: "OK", users: users });
 };
 
-module.exports = { handleLogin, handleGetAllUsers };
+const handleCreateNewUser = async (req, res) => {
+  let message = await userService.createNewUser(req.body);
+  console.log(message);
+  return res.status(200).json(message);
+};
+
+const handleDeleteUser = async (req, res) => {
+  if (!req.body.id) {
+    return res.status(200).json({
+      errCode: 1,
+      errMessage: "Missing required parameters!!!",
+    });
+  }
+  let message = await userService.deleteUser(+req.body.id);
+  return res.status(200).json(message);
+};
+
+const handleEditUser = async (req, res) => {
+  let data = req.body;
+  let message = await userService.updateUserData(data);
+  return res.status(200).json(message);
+};
+
+module.exports = {
+  handleLogin,
+  handleGetAllUsers,
+  handleCreateNewUser,
+  handleEditUser,
+  handleDeleteUser,
+};
