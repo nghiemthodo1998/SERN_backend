@@ -1,5 +1,5 @@
-import db from '../models/index';
-import bcrypt from 'bcryptjs';
+import db from "../models/index";
+import bcrypt from "bcryptjs";
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -11,7 +11,7 @@ const handleUserLogin = (email, password) => {
 
       if (isExist) {
         let user = await db.User.findOne({
-          attributes: ['email', 'roleId', 'password'],
+          attributes: ["id", "email", "roleId", "password"],
           where: { email: email },
           raw: true,
         });
@@ -21,12 +21,12 @@ const handleUserLogin = (email, password) => {
 
           if (check) {
             userData.errCode = 0;
-            userData.message = 'OK';
+            userData.message = "OK";
             delete user.password;
             userData.user = user;
           } else {
             userData.errCode = 3;
-            userData.message = 'Wrong password';
+            userData.message = "Wrong password";
           }
         } else {
           userData.errCode = 2;
@@ -65,21 +65,21 @@ const checkUserEmail = (email) => {
 const getAllUsers = async (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let users = '';
+      let users = "";
 
-      if (userId === 'ALL') {
+      if (userId === "ALL") {
         users = await db.User.findAll({
           attributes: {
-            exclude: ['password'],
+            exclude: ["password"],
           },
         });
       }
 
-      if (userId && userId !== 'ALL') {
+      if (userId && userId !== "ALL") {
         users = await db.User.findOne({
           where: { id: userId },
           attributes: {
-            exclude: ['password'],
+            exclude: ["password"],
           },
         });
       }
@@ -109,7 +109,7 @@ const createNewUser = (data) => {
       if (check === true) {
         resolve({
           errCode: 1,
-          message: 'This email is exist!!!',
+          message: "This email is exist!!!",
         });
       } else {
         let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -121,14 +121,14 @@ const createNewUser = (data) => {
           lastName,
           address,
           phonenumber,
-          gender: gender === '1' ? true : false,
+          gender: gender === "1" ? true : false,
           roleId,
           positionId,
         });
 
         resolve({
           errCode: 0,
-          message: 'Create a new user success!!!',
+          message: "Create a new user success!!!",
         });
       }
     } catch (error) {
@@ -167,7 +167,7 @@ const deleteUser = (id) => {
 
       resolve({
         errCode: 0,
-        message: 'Deleted user success!!!',
+        message: "Deleted user success!!!",
       });
     }
   });
@@ -188,7 +188,7 @@ const updateUserData = (data) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (!id) {
-        resolve({ errCode: 2, message: 'Missing required parameters' });
+        resolve({ errCode: 2, message: "Missing required parameters" });
       } else {
         let user = await db.User.findOne({ where: { id: id }, raw: false });
 
@@ -203,9 +203,9 @@ const updateUserData = (data) => {
           user.positionId = positionId;
           await user.save();
 
-          resolve({ errCode: 0, message: 'Updated user success!!!' });
+          resolve({ errCode: 0, message: "Updated user success!!!" });
         } else {
-          resolve({ errCode: 1, message: 'User not found' });
+          resolve({ errCode: 1, message: "User not found" });
         }
       }
     } catch (error) {

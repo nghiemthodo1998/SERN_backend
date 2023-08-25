@@ -1,21 +1,46 @@
-import userService from '../services/userService';
-
+import userService from "../services/userService";
+const jwt = require("jsonwebtoken");
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res
-      .status(200)
-      .json({ errCode: 1, message: 'Missing inputs parameter!' });
+      .status(400)
+      .json({ errCode: 1, message: "Missing inputs parameter!" });
   }
 
-  let userData = await userService.handleUserLogin(email, password);
+  try {
+    let userData = await userService.handleUserLogin(email, password);
 
-  return res.status(200).json({
-    errCode: userData.errCode,
-    message: userData.message,
-    user: userData.user ? userData.user : {},
-  });
+    if (userData.errCode === 0) {
+      const token = await jwt.sign(
+        { userLogin: userData.user },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      return res.status(200).json({
+        errCode: userData.errCode,
+        message: userData.message,
+        user: userData.user,
+        token: token,
+      });
+    } else {
+      return res.status(200).json({
+        errCode: userData.errCode,
+        message: userData.message,
+        user: {},
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errCode: 500,
+      message: "Đã xảy ra lỗi trong quá trình xử lý.",
+      user: {},
+    });
+  }
 };
 
 const handleGetAllUsers = async (req, res) => {
@@ -23,13 +48,13 @@ const handleGetAllUsers = async (req, res) => {
   if (!id) {
     return res.status(200).json({
       errCode: 1,
-      message: 'Missing required parameters',
+      message: "Missing required parameters",
       users: [],
     });
   }
   let users = await userService.getAllUsers(id);
 
-  return res.status(200).json({ errCode: 0, message: 'OK', users: users });
+  return res.status(200).json({ errCode: 0, message: "OK", users: users });
 };
 
 const handleCreateNewUser = async (req, res) => {
@@ -42,7 +67,7 @@ const handleDeleteUser = async (req, res) => {
   if (!id) {
     return res.status(200).json({
       errCode: 1,
-      message: 'Missing required parameters!!!',
+      message: "Missing required parameters!!!",
     });
   }
   let message = await userService.deleteUser(+id);
