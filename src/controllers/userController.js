@@ -20,12 +20,15 @@ const handleLogin = async (req, res) => {
           expiresIn: "1h",
         }
       );
-
+      res.cookie("access_token", token, {
+        maxAge: 365 * 24 * 60 * 60 * 100,
+        httpOnly: true,
+        // secure: true;
+      });
       return res.status(200).json({
         errCode: userData.errCode,
         message: userData.message,
         user: userData.user,
-        token: token,
       });
     } else {
       return res.status(200).json({
