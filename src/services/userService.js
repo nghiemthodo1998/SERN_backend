@@ -11,7 +11,7 @@ const handleUserLogin = (email, password) => {
 
       if (isExist) {
         let user = await db.User.findOne({
-          attributes: ["id", "email", "roleId", "password"],
+          attributes: ["id", "email", "roleId", "positionId", "password"],
           where: { email: email },
           raw: true,
         });
