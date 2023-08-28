@@ -44,6 +44,21 @@ const handleUserLogin = (email, password) => {
   });
 };
 
+const handleLogout = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let userData = {
+        errCode: 0,
+        message: "Logout success!!!",
+        user: {},
+      };
+      resolve(userData);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 const checkUserEmail = (email) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -221,4 +236,5 @@ module.exports = {
   createNewUser,
   deleteUser,
   updateUserData,
+  handleLogout,
 };

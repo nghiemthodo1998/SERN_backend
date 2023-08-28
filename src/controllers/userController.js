@@ -1,5 +1,6 @@
 import userService from "../services/userService";
 const jwt = require("jsonwebtoken");
+
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -46,8 +47,27 @@ const handleLogin = async (req, res) => {
   }
 };
 
+const handleLogout = async (req, res) => {
+  let userData = await userService.handleLogout();
+  res.clearCookie("access_token"); // Xóa cookie có tên "access_token"
+
+  return res.status(200).json({
+    errCode: userData.errCode,
+    message: userData.message,
+    user: userData.user,
+  });
+};
+
 const handleGetAllUsers = async (req, res) => {
   let { id } = req.query; //ALL, id
+  const token = req.cookies.access_token;
+  if (!token) {
+    return res.status(401).json({
+      errCode: 401,
+      message: "Unauthorized",
+      users: [],
+    });
+  }
   if (!id) {
     return res.status(200).json({
       errCode: 1,
@@ -55,9 +75,20 @@ const handleGetAllUsers = async (req, res) => {
       users: [],
     });
   }
-  let users = await userService.getAllUsers(id);
+  try {
+    // Giải mã token và kiểm tra tính hợp lệ
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-  return res.status(200).json({ errCode: 0, message: "OK", users: users });
+    let users = await userService.getAllUsers(id);
+
+    return res.status(200).json({ errCode: 0, message: "OK", users: users });
+  } catch (error) {
+    return res.status(401).json({
+      errCode: 401,
+      message: "Unauthorized",
+      users: [],
+    });
+  }
 };
 
 const handleCreateNewUser = async (req, res) => {
@@ -89,4 +120,5 @@ module.exports = {
   handleCreateNewUser,
   handleEditUser,
   handleDeleteUser,
+  handleLogout,
 };
