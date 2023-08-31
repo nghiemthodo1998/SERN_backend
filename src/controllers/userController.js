@@ -48,7 +48,7 @@ const handleLogin = async (req, res) => {
 };
 
 const handleLogout = async (req, res) => {
-  let userData = await userService.handleLogout();
+  let userData = await userService.handleUserLogout();
   res.clearCookie("access_token"); // Xóa cookie có tên "access_token"
 
   return res.status(200).json({
@@ -114,6 +114,16 @@ const handleEditUser = async (req, res) => {
   return res.status(200).json(message);
 };
 
+const handleGetAllCode = async (req, res) => {
+  const typeInput = req.query.type;
+  try {
+    let data = await userService.getAllCode(typeInput);
+    return res.status(200).json(data);
+  } catch (error) {
+    res.status(200).json({ errCode: -1, message: "Error from server" });
+  }
+};
+
 module.exports = {
   handleLogin,
   handleGetAllUsers,
@@ -121,4 +131,5 @@ module.exports = {
   handleEditUser,
   handleDeleteUser,
   handleLogout,
+  handleGetAllCode,
 };

@@ -44,7 +44,7 @@ const handleUserLogin = (email, password) => {
   });
 };
 
-const handleLogout = () => {
+const handleUserLogout = () => {
   return new Promise(async (resolve, reject) => {
     try {
       let userData = {
@@ -229,6 +229,29 @@ const updateUserData = (data) => {
   });
 };
 
+const getAllCode = (typeInput) => {
+  return new Promise(async (response, reject) => {
+    try {
+      if (!typeInput) {
+        response({
+          errCode: 1,
+          message: "Missing required parameters",
+        });
+      } else {
+        let res = {};
+        let allCode = await db.Allcode.findAll({
+          where: { type: typeInput },
+        });
+        res.errCode = 0;
+        res.data = allCode;
+        response(res);
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   handleUserLogin,
   checkUserEmail,
@@ -236,5 +259,6 @@ module.exports = {
   createNewUser,
   deleteUser,
   updateUserData,
-  handleLogout,
+  handleUserLogout,
+  getAllCode,
 };
