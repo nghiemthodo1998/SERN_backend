@@ -136,7 +136,7 @@ const createNewUser = (data) => {
           lastName,
           address,
           phonenumber,
-          gender: gender === "1" ? true : false,
+          gender,
           roleId,
           positionId,
         });
